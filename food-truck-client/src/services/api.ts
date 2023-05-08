@@ -19,3 +19,12 @@ export const getFoodTruckPermitsByStatus = async (status: string[], size: number
     console.error(e)
   }
 }
+
+export const searchFoodTruckPermits = async (input: string): Promise<PageImplFoodTruckPermit | undefined> => {
+  try {
+    const response = await sodaControllerApi.searchFoodTruckPermit(input)
+    return response.data as PageImplFoodTruckPermit
+  } catch (e: any) {
+    console.error(e)
+  }
+}

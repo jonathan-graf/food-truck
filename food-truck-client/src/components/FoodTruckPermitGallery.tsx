@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { getAllFoodTruckPermits } from '../services/api'
+import { getAllFoodTruckPermits, getFoodTruckPermitsByStatus, searchFoodTruckPermits } from '../services/api'
 import { FoodTruckPermit, PageImplFoodTruckPermit } from '../swagger-codegen'
 import { Badge, Button, Card, Col, Row } from 'react-bootstrap'
 import ReactPaginate from 'react-paginate'
 import { FoodTruckPermitDetail } from './FoodTruckPermitDetail'
+import { Action } from './App'
 
-export const FoodTruckPermitGallery = (): JSX.Element => {
+interface Props {
+  action: Action
+  input?: string
+}
+
+export const FoodTruckPermitGallery = (props: Props): JSX.Element => {
+  const {
+    action,
+    input,
+  } = props
+  
   const [foodTruckPermits, setFoodTruckPermits] = useState<PageImplFoodTruckPermit>()
   const [foodTruckPermitDetail, setFoodTruckPermitDetail] = useState<FoodTruckPermit>()
   const [page, setPage] = useState<number>(0)
@@ -13,10 +24,23 @@ export const FoodTruckPermitGallery = (): JSX.Element => {
   const size = 8
 
   useEffect(() => {
-    getAllFoodTruckPermits(size, page).then(results => {
-      results && setFoodTruckPermits(results)
-    })
-  }, [page])
+    switch (action) {
+      case Action.DASHBOARD:
+        getAllFoodTruckPermits(size, page).then(results => {
+          results && setFoodTruckPermits(results)
+        })
+        break
+      case Action.PENDING:
+        getFoodTruckPermitsByStatus(['REQUESTED'], size, page).then(results => {
+          results && setFoodTruckPermits(results)
+        })
+        break
+      case Action.SEARCH:
+        input && searchFoodTruckPermits(input).then(results => {
+          results && setFoodTruckPermits(results)
+        })
+    }    
+  }, [page, action, input])
 
   const getStatusColor = (statusCode: string): string => {
     switch (statusCode) {
@@ -36,7 +60,7 @@ export const FoodTruckPermitGallery = (): JSX.Element => {
           <Col>
             <Card style={{ width: '18rem' }}>
               <Card.Body>
-                <Card.Title>{ftp.objectid}</Card.Title>
+                <Card.Title>ID: {ftp.objectid}</Card.Title>
                 <Card.Text>
                   <div className='fw-bold'>{ftp.applicant}</div>
                   <Badge bg={getStatusColor(ftp.status)}>{ftp.status}</Badge>

@@ -18,7 +18,6 @@ import { Configuration } from '../configuration';
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
 import { FoodTruckPermit } from '../models';
 import { PageImplFoodTruckPermit } from '../models';
-import { RestTemplate } from '../models';
 /**
  * SodaApiControllerApi - axios parameter creator
  * @export
@@ -117,16 +116,11 @@ export const SodaApiControllerApiAxiosParamCreator = function (configuration?: C
         },
         /**
          * 
-         * @param {RestTemplate} restTemplate 
          * @param {string} input 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        searchFoodTruckPermit: async (restTemplate: RestTemplate, input: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'restTemplate' is not null or undefined
-            if (restTemplate === null || restTemplate === undefined) {
-                throw new RequiredError('restTemplate','Required parameter restTemplate was null or undefined when calling searchFoodTruckPermit.');
-            }
+        searchFoodTruckPermit: async (input: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'input' is not null or undefined
             if (input === null || input === undefined) {
                 throw new RequiredError('input','Required parameter input was null or undefined when calling searchFoodTruckPermit.');
@@ -142,10 +136,6 @@ export const SodaApiControllerApiAxiosParamCreator = function (configuration?: C
             const localVarRequestOptions :AxiosRequestConfig = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
-
-            if (restTemplate !== undefined) {
-                localVarQueryParameter['restTemplate'] = restTemplate;
-            }
 
             const query = new URLSearchParams(localVarUrlObj.search);
             for (const key in localVarQueryParameter) {
@@ -321,13 +311,12 @@ export const SodaApiControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {RestTemplate} restTemplate 
          * @param {string} input 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async searchFoodTruckPermit(restTemplate: RestTemplate, input: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<PageImplFoodTruckPermit>>> {
-            const localVarAxiosArgs = await SodaApiControllerApiAxiosParamCreator(configuration).searchFoodTruckPermit(restTemplate, input, options);
+        async searchFoodTruckPermit(input: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<PageImplFoodTruckPermit>>> {
+            const localVarAxiosArgs = await SodaApiControllerApiAxiosParamCreator(configuration).searchFoodTruckPermit(input, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -394,13 +383,12 @@ export const SodaApiControllerApiFactory = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {RestTemplate} restTemplate 
          * @param {string} input 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async searchFoodTruckPermit(restTemplate: RestTemplate, input: string, options?: AxiosRequestConfig): Promise<AxiosResponse<PageImplFoodTruckPermit>> {
-            return SodaApiControllerApiFp(configuration).searchFoodTruckPermit(restTemplate, input, options).then((request) => request(axios, basePath));
+        async searchFoodTruckPermit(input: string, options?: AxiosRequestConfig): Promise<AxiosResponse<PageImplFoodTruckPermit>> {
+            return SodaApiControllerApiFp(configuration).searchFoodTruckPermit(input, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -458,14 +446,13 @@ export class SodaApiControllerApi extends BaseAPI {
     }
     /**
      * 
-     * @param {RestTemplate} restTemplate 
      * @param {string} input 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SodaApiControllerApi
      */
-    public async searchFoodTruckPermit(restTemplate: RestTemplate, input: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<PageImplFoodTruckPermit>> {
-        return SodaApiControllerApiFp(this.configuration).searchFoodTruckPermit(restTemplate, input, options).then((request) => request(this.axios, this.basePath));
+    public async searchFoodTruckPermit(input: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<PageImplFoodTruckPermit>> {
+        return SodaApiControllerApiFp(this.configuration).searchFoodTruckPermit(input, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 

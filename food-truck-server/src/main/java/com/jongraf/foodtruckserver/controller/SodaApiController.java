@@ -126,7 +126,7 @@ public class SodaApiController {
   }
   
   @GetMapping("/permits/search/{input}")
-  public PageImpl<FoodTruckPermit> searchFoodTruckPermit(RestTemplate restTemplate, @PathVariable String input) {
+  public PageImpl<FoodTruckPermit> searchFoodTruckPermit(@PathVariable String input) {
     List<FoodTruckPermit> foodTruckPermits = null;   
 
     String httpGet = getApiUrl() + "?$q=" + input;

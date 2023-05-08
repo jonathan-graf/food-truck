@@ -26,7 +26,7 @@ public class FoodTruckServerApplication {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/permits").allowedOrigins(corsUrls);
+        registry.addMapping("/permits/**").allowedOrigins(corsUrls);
       }
     };
   }

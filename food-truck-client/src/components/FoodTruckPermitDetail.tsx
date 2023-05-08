@@ -21,6 +21,10 @@ export const FoodTruckPermitDetail = (props: Props): JSX.Element => {
       <Modal.Body>
         <Table striped="columns" bordered hover>
           <tbody>
+          <tr>
+              <td>Object ID</td>
+              <td>{ftp.objectid}</td>
+            </tr>
             <tr>
               <td>Address</td>
               <td>{ftp.address}</td>
@@ -54,10 +58,7 @@ export const FoodTruckPermitDetail = (props: Props): JSX.Element => {
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
           Close
-        </Button>
-        <Button variant="primary" onClick={handleClose}>
-          Save Changes
-        </Button>
+        </Button>        
       </Modal.Footer>
     </Modal>
    )
