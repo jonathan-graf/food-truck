@@ -8,8 +8,8 @@ Ensure you have Docker installed.
 1. Run `docker-compose up`
 
 # URLs
-Backend documentation: http://localhost:8080/swagger-ui/index.html
-Frontend UI: http://localhost:3000
+| Frontend UI: | http://localhost:3000 |
+| Backend documentation: | http://localhost:8080/swagger-ui/index.html |
 
 # 📖 Generate API via Swagger Schema
 `brew install swagger-codegen`
