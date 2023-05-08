@@ -56,7 +56,7 @@ public class SodaApiController {
   }
   
   @GetMapping("/permits/{id}")
-  public FoodTruckPermit getAllFoodTruckPermitById(@PathVariable long id) {
+  public FoodTruckPermit getFoodTruckPermitById(@PathVariable long id) {
     FoodTruckPermit foodTruckPermit = null;
     FoodTruckPermit[] response = restTemplate.getForObject(getApiUrl() + "?" + "objectid=" + id + "&$order=objectid", FoodTruckPermit[].class);
 
@@ -69,7 +69,7 @@ public class SodaApiController {
   }
 
   @GetMapping("/permits/search/{input}/status/{statusInput}")
-  public PageImpl<FoodTruckPermit> searchFoodTruckPermitByStatus(@PathVariable String input, 
+  public PageImpl<FoodTruckPermit> searchFoodTruckPermitByTextAndStatus(@PathVariable String input, 
     @PathVariable StatusType[] statusInput, @RequestParam int size, @RequestParam int page) {
     List<FoodTruckPermit> foodTruckPermits = null;   
     String statusClause = null;    
@@ -91,6 +91,31 @@ public class SodaApiController {
     }
 
     String query = "where=(" + textSearchClause + ")" + (statusClause != null ? " " + statusClause : "");
+    String httpGet = getApiUrl() + "?$" + query + generatePaginationClause(size, page);
+    
+    FoodTruckPermit[] array = restTemplate.getForObject(httpGet, FoodTruckPermit[].class);
+    foodTruckPermits = Arrays.asList(array);
+    
+    Integer count = count(query);  
+    return new PageImpl<FoodTruckPermit>(foodTruckPermits, PageRequest.of(page, size), count);
+  }
+  
+  @GetMapping("/permits/status/{statusInput}")
+  public PageImpl<FoodTruckPermit> searchFoodTruckPermitByStatus(@PathVariable StatusType[] statusInput,
+    @RequestParam int size, @RequestParam int page) {
+    List<FoodTruckPermit> foodTruckPermits = null;   
+    String statusClause = null;    
+        
+    List<StatusType> statusArrayList = Arrays.asList(statusInput);
+    if (!statusArrayList.contains(StatusType.ALL)) {
+      statusClause = " status IN (";
+      for (int i = 0; i < statusInput.length; i++) {
+         statusClause += "'" + statusInput[i].toString() + "'" + (i < statusInput.length -1 ? ", " : "");
+      };
+      statusClause += ")";
+    }
+
+    String query = "where=" + statusClause;
     String httpGet = getApiUrl() + "?$" + query + generatePaginationClause(size, page);
     
     FoodTruckPermit[] array = restTemplate.getForObject(httpGet, FoodTruckPermit[].class);

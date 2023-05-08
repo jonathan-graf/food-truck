@@ -10,3 +10,9 @@ Ensure you have Docker installed.
 # URLs
 Backend documentation: http://localhost:8080/swagger-ui/index.html
 Frontend UI: http://localhost:3000
+
+# 📖 Generate API via Swagger Schema
+`brew install swagger-codegen`
+
+`rm -rf src/swagger-codegen && swagger-codegen generate -i http://localhost:8080/api-docs -l typescript-axios -o src/swagger-codegen`
+
