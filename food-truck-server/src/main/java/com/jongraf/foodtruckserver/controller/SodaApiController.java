@@ -18,6 +18,13 @@ import com.jongraf.foodtruckserver.model.CountAlias;
 import com.jongraf.foodtruckserver.model.FoodTruckPermit;
 import com.jongraf.foodtruckserver.model.StatusType;
 
+/**
+ * REST APIs using the SODA SoQL interface for Open Data
+ * for San Francisco Food Truck Permits
+ * 
+ * @author jongraf
+ *
+ */
 @RestController
 public class SodaApiController {
   
@@ -37,7 +44,13 @@ public class SodaApiController {
   private Integer count(String query) {
     return restTemplate.getForObject(getApiUrl() + "?$select=count(*) as countalias" + (query != null ? " " + query.replace("where=", "where") : ""), CountAlias[].class)[0].countalias();
   }
-  
+  /**
+   * Used for the Dashboard UI
+   * 
+   * @param size
+   * @param page
+   * @return
+   */
   @GetMapping("/permits")
   public PageImpl<FoodTruckPermit> getAllFoodTruckPermits(@RequestParam int size, @RequestParam int page) {
     List<FoodTruckPermit> foodTruckPermits = null;
@@ -50,6 +63,13 @@ public class SodaApiController {
     return new PageImpl<FoodTruckPermit>(foodTruckPermits, PageRequest.of(page, size), count);
   }
 
+  /**
+   * Reusable paginaton string generator
+   * 
+   * @param size
+   * @param page
+   * @return
+   */
   private String generatePaginationClause(int size, int page) {
     String paginationClause = "&$limit=" + size + "&$offset=" + page * size + "&$order=objectid";
     return paginationClause;
@@ -63,7 +83,7 @@ public class SodaApiController {
     if (response.length != 1) {
       throw new FoodTruckPermitNotFoundException(id);
     } else {
-      foodTruckPermit = response[0];
+      foodTruckPermit = response[0];  // We only need the first one, y'all
       return foodTruckPermit;
     }      
   }
@@ -81,16 +101,9 @@ public class SodaApiController {
       textSearchClause += "lower(" + fieldNames[i] + ") + LIKE '%" + input + "%'" + (i != fieldNames.length - 1 ? " OR " : ""); 
     }
     
-    List<StatusType> statusArrayList = Arrays.asList(statusInput);
-    if (!statusArrayList.contains(StatusType.ALL)) {
-      statusClause = " AND status IN (";
-      for (int i = 0; i < statusInput.length; i++) {
-         statusClause += "'" + statusInput[i].toString() + "'" + (i < statusInput.length -1 ? ", " : "");
-      };
-      statusClause += ")";
-    }
+    statusClause = generateStatusClause(statusInput, statusClause);
 
-    String query = "where=(" + textSearchClause + ")" + (statusClause != null ? " " + statusClause : "");
+    String query = "where=(" + textSearchClause + ")" + (statusClause != null ? " AND " + statusClause : "");
     String httpGet = getApiUrl() + "?$" + query + generatePaginationClause(size, page);
     
     FoodTruckPermit[] array = restTemplate.getForObject(httpGet, FoodTruckPermit[].class);
@@ -99,13 +112,8 @@ public class SodaApiController {
     Integer count = count(query);  
     return new PageImpl<FoodTruckPermit>(foodTruckPermits, PageRequest.of(page, size), count);
   }
-  
-  @GetMapping("/permits/status/{statusInput}")
-  public PageImpl<FoodTruckPermit> searchFoodTruckPermitByStatus(@PathVariable StatusType[] statusInput,
-    @RequestParam int size, @RequestParam int page) {
-    List<FoodTruckPermit> foodTruckPermits = null;   
-    String statusClause = null;    
-        
+
+  private String generateStatusClause(StatusType[] statusInput, String statusClause) {
     List<StatusType> statusArrayList = Arrays.asList(statusInput);
     if (!statusArrayList.contains(StatusType.ALL)) {
       statusClause = " status IN (";
@@ -114,6 +122,16 @@ public class SodaApiController {
       };
       statusClause += ")";
     }
+    return statusClause;
+  }
+  
+  @GetMapping("/permits/status/{statusInput}")
+  public PageImpl<FoodTruckPermit> searchFoodTruckPermitByStatus(@PathVariable StatusType[] statusInput,
+    @RequestParam int size, @RequestParam int page) {
+    List<FoodTruckPermit> foodTruckPermits = null;   
+    String statusClause = null;    
+        
+    statusClause = generateStatusClause(statusInput, statusClause);
 
     String query = "where=" + statusClause;
     String httpGet = getApiUrl() + "?$" + query + generatePaginationClause(size, page);
@@ -125,6 +143,12 @@ public class SodaApiController {
     return new PageImpl<FoodTruckPermit>(foodTruckPermits, PageRequest.of(page, size), count);
   }
   
+  /**
+   * The SoQL database allows for a search engine-style search with a "q" param
+   * 
+   * @param input
+   * @return
+   */
   @GetMapping("/permits/search/{input}")
   public PageImpl<FoodTruckPermit> searchFoodTruckPermit(@PathVariable String input) {
     List<FoodTruckPermit> foodTruckPermits = null;   
