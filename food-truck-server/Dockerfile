@@ -5,12 +5,12 @@ FROM eclipse-temurin:19-jdk-alpine AS build
 WORKDIR /workspace/app
 
 COPY . /workspace/app
-RUN --mount=type=cache,target=/root/.gradle ./gradlew clean build
-RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*-SNAPSHOT.jar)
+RUN --mount=type=cache,target=/root/.m2 ./mvnw install -DskipTests
+RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 FROM eclipse-temurin:19-jdk-alpine
 VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/build/dependency
+ARG DEPENDENCY=/workspace/app/target/dependency
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app

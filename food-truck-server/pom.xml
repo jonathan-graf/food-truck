@@ -15,7 +15,7 @@
 	<name>food-truck-server</name>
 	<description>San Francisco Food Truck API</description>
 	<properties>
-		<java.version>20</java.version>
+		<java.version>19</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

@@ -16,16 +16,16 @@ ENV PORT=3000
 CMD [ "npm", "start" ]
 
 FROM development AS dev-envs
-RUN <<EOF
-apt-get update
-apt-get install -y git
-EOF
+RUN 
+RUN apt-get update
+RUN apt-get install -y git
 
-RUN <<EOF
-useradd -s /bin/bash -m vscode
-groupadd docker
-usermod -aG docker vscode
-EOF
+
+RUN 
+RUN useradd -s /bin/bash -m vscode
+RUN groupadd docker
+RUN usermod -aG docker vscode
+
 # install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
 CMD [ "npm", "start" ]

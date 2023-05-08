@@ -6,9 +6,6 @@ services:
       - 8080:8080
     networks:
       - react-spring
-    depends_on:
-      db:
-        condition: service_healthy
   frontend:
     build:
       context: food-truck-client
@@ -16,11 +13,9 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./frontend/src:/code/src
-      - /project/node_modules
+      - ./food-truck-client/src:/code/src
+      - /food-truck-client/node_modules
     networks:
-      - react-spring
-    depends_on:
-      - backend
+      - react-spring    
 networks:
   react-spring: {}
